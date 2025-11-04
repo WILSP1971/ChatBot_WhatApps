@@ -1,4 +1,5 @@
 using QuestPDF.Fluent;
+using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System;
 using System.IO;
@@ -54,10 +55,12 @@ namespace WhatsAppChatbotSystem.PDF
         {
             container.Column(column =>
             {
-                column.Item().Spacing(5).Element(c =>
-                {
-                    c.Text($"Nombre: {Data.NombrePaciente}");
-                });
+                column.Item().PaddingVertical(5).Text($"Nombre: {Data.NombrePaciente}");
+
+                // column.Item().Spacing(5).Element(c =>
+                // {
+                //     c.Text($"Nombre: {Data.NombrePaciente}");
+                // });
 
                 column.Item().Element(c => c.Text($"Identificación: {Data.NoIdentificacion} - Edad: {Data.Edad} - Sexo: {Data.Sexo}"));
 

@@ -17,13 +17,22 @@ namespace WhatsAppChatbotSystem.Services
         public WhatsAppService(HttpClient http, string baseUrl, string token, string phoneNumberId)
         {
             _http = http;
-            _baseUrl = baseUrl; // e.g. https://graph.facebook.com/v15.0
-            _token = token;
-            _phoneNumberId = phoneNumberId;
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token ?? string.Empty);
-
-            //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+            _baseUrl = baseUrl ?? string.Empty;
+            _token = token ?? string.Empty;
+            _phoneNumberId = phoneNumberId ?? string.Empty;
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
         }
+
+        // public WhatsAppService(HttpClient http, string baseUrl, string token, string phoneNumberId)
+        // {
+        //     _http = http;
+        //     _baseUrl = baseUrl; // e.g. https://graph.facebook.com/v15.0
+        //     _token = token;
+        //     _phoneNumberId = phoneNumberId;
+        //     _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token ?? string.Empty);
+
+        //     //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+        // }
 
         // Upload media (PDF) and send it as a document to a phone number
         public async Task<string> SendPdfToUserAsync(string toPhoneNumber, string pdfFilePath, string caption = null)
