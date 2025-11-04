@@ -20,7 +20,9 @@ namespace WhatsAppChatbotSystem.Services
             _baseUrl = baseUrl; // e.g. https://graph.facebook.com/v15.0
             _token = token;
             _phoneNumberId = phoneNumberId;
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token ?? string.Empty);
+
+            //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
         }
 
         // Upload media (PDF) and send it as a document to a phone number

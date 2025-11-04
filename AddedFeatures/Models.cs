@@ -254,4 +254,4 @@ public class OrdenResponse
 
 
 // Partial extension added by assistant to include NoHistoria for PDF generation
-namespace WhatsAppChatbotSystem.Controllers { public partial class HistoriaClinicaDto { public string NoHistoria { get; set; } } }
+//namespace WhatsAppChatbotSystem.Controllers { public partial class HistoriaClinicaDto { public string NoHistoria { get; set; } } }
