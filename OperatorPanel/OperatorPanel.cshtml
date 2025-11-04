@@ -1,0 +1,101 @@
+@* OperatorPanel.cshtml - simplified operator panel with chat logging and modal for historia clinica *@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Panel de Operadores - Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h2>Chat con Usuario</h2>
+    <div id="chatWindow" style="border:1px solid #ccc;height:300px;padding:10px;overflow:auto"></div>
+    <div>
+        <input id="messageInput" placeholder="Escribe un mensaje..." style="width:70%" />
+        <button onclick="sendMessage()">Enviar</button>
+        <button onclick="openHistoriaModal()">Historia Clínica</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="historiaModal" style="display:none;position:fixed;right:10px;top:10px;width:500px;height:600px;background:#fff;border:1px solid #ccc;padding:10px;overflow:auto;z-index:999;">
+        <h3>Historia Clínica</h3>
+        <form id="historiaForm" onsubmit="return saveHistoria();">
+            <label>No Identificación</label><br/>
+            <input name="NoIdentificacion" /><br/>
+            <label>Nombre</label><br/>
+            <input name="NombrePaciente" /><br/>
+            <label>Edad</label><br/>
+            <input name="Edad" type="number" /><br/>
+            <label>Motivo Consulta</label><br/>
+            <textarea name="MotivoConsulta"></textarea><br/>
+            <label>Enfermedad Actual</label><br/>
+            <textarea name="EnfermedadActual"></textarea><br/>
+            <button type="submit">Guardar y Enviar PDF</button>
+            <button type="button" onclick="closeHistoriaModal()">Cerrar</button>
+        </form>
+    </div>
+
+    <script>
+        const conversationId = "conv-" + Math.random().toString(36).substring(2,9);
+        const phoneNumber = "+57XXXXXXXXX";
+
+        function appendToChat(text, who){
+            const div = document.createElement('div');
+            div.innerText = `[${who}] ${text}`;
+            document.getElementById('chatWindow').appendChild(div);
+            document.getElementById('chatWindow').scrollTop = document.getElementById('chatWindow').scrollHeight;
+        }
+
+        async function sendMessage(){
+            const content = document.getElementById('messageInput').value;
+            if(!content) return;
+            appendToChat(content, 'Operator');
+            // Log to backend
+            await axios.post('/api/chat/log', {
+                ConversationId: conversationId,
+                PhoneNumber: phoneNumber,
+                CustomerName: 'Paciente Demo',
+                MessageId: '',
+                Content: content,
+                MessageType: 'Operator',
+                Sender: 'Operator',
+                Timestamp: new Date().toISOString()
+            });
+            document.getElementById('messageInput').value = '';
+        }
+
+        function openHistoriaModal(){
+            document.getElementById('historiaModal').style.display = 'block';
+        }
+        function closeHistoriaModal(){
+            document.getElementById('historiaModal').style.display = 'none';
+        }
+
+        async function saveHistoria(){
+            const form = document.getElementById('historiaForm');
+            const data = {};
+            new FormData(form).forEach((v,k)=>data[k]=v);
+            // Save historia
+            const res = await axios.post('/api/historiaclinica/save', data);
+            if(res.data && res.data.success){
+                appendToChat('Se guardó historia clínica: ' + res.data.data.noHistoria + ' (PDF enviado)', 'System');
+                // Optionally send PDF via WhatsApp API - placeholder
+                await axios.post('/api/chat/log', {
+                    ConversationId: conversationId,
+                    PhoneNumber: phoneNumber,
+                    CustomerName: 'Paciente Demo',
+                    MessageId: '',
+                    Content: 'Se adjunta PDF de historia clínica: ' + res.data.data.pdfUrl,
+                    MessageType: 'System',
+                    Sender: 'System',
+                    Timestamp: new Date().toISOString()
+                });
+                closeHistoriaModal();
+                return false;
+            } else {
+                alert('Error al guardar');
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>
