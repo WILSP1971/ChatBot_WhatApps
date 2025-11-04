@@ -42,7 +42,9 @@ namespace WhatsAppChatbotSystem.PDF
                 row.RelativeColumn().Stack(stack =>
                 {
                     stack.Item().Text("HISTORIA CLÍNICA").SemiBold().FontSize(16);
-                    stack.Item().Text($"No Historia: {{Data.GetType().GetProperty("NoHistoria")?.GetValue(Data) ?? string.Empty}}").FontSize(10);
+                    stack.Item().Text($"No Historia: {Data.NoHistoria ?? string.Empty}").FontSize(10);
+
+                    //stack.Item().Text($"No Historia: {{Data.GetType().GetProperty("NoHistoria")?.GetValue(Data) ?? string.Empty}}").FontSize(10);
                 });
                 row.ConstantColumn(100).Height(60).AlignRight().Text("Logo").FontSize(12);
             });
@@ -54,10 +56,10 @@ namespace WhatsAppChatbotSystem.PDF
             {
                 column.Item().Spacing(5).Element(c =>
                 {
-                    c.Text($"Nombre: {{Data.NombrePaciente}}");
+                    c.Text($"Nombre: {Data.NombrePaciente}");
                 });
 
-                column.Item().Element(c => c.Text($"Identificación: {{Data.NoIdentificacion}} - Edad: {{Data.Edad}} - Sexo: {{Data.Sexo}}"));
+                column.Item().Element(c => c.Text($"Identificación: {Data.NoIdentificacion} - Edad: {Data.Edad} - Sexo: {Data.Sexo}"));
 
                 column.Item().PaddingTop(8).Text("Motivo de consulta:").SemiBold();
                 column.Item().Text(Data.MotivoConsulta ?? "-");
